@@ -1,0 +1,17 @@
+# Build output
+out/
+build/
+cmake-build-*/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.VC.db
+*.VC.VC.opendb
+
+# Compiled binaries
+bin/
+Debug/
+Release/
+x64/
