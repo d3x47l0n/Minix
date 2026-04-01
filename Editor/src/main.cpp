@@ -6,8 +6,6 @@ int main()
     InitWindow(800, 600, "Editor");
     SetTargetFPS(60);
 
-    Engine::Hello();
-
     while (!WindowShouldClose())
     {
         BeginDrawing();

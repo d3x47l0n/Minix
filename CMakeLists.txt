@@ -23,33 +23,36 @@ FetchContent_Declare(
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_GAMES OFF CACHE BOOL "" FORCE)
 
-FetchContent_MakeAvailable(raylib)
+# --- box2d ---
+FetchContent_Declare(
+    box2d
+    GIT_REPOSITORY https://github.com/erincatto/box2d.git
+    GIT_TAG v3.1.0
+)
+
+FetchContent_MakeAvailable(raylib box2d)
 
 # --- Engine library ---
 add_library(Engine STATIC
-    Engine/src/Engine.cpp
-)
+    "Engine/src/Runtime.cpp" "Engine/src/World.cpp" "Engine/src/App.cpp"  "Engine/src/Registry.cpp")
 
 target_include_directories(Engine PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/Engine/include
 )
 
-target_link_libraries(Engine PUBLIC raylib)
+target_link_libraries(Engine PUBLIC raylib box2d)
 
 # --- Editor ---
-add_executable(Editor
-    Editor/src/main.cpp
-)
+add_executable(Editor WIN32
+    Editor/src/main.cpp)
 target_link_libraries(Editor PRIVATE Engine)
 
 # --- Player ---
-add_executable(Player
-    Player/src/main.cpp
-)
+add_executable(Player WIN32
+    Player/src/main.cpp)
 target_link_libraries(Player PRIVATE Engine)
 
 # --- Test ---
 add_executable(Test
-    Test/src/main.cpp
-)
+    Test/src/main.cpp)
 target_link_libraries(Test PRIVATE Engine)
