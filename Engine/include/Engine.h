@@ -6,6 +6,8 @@
 #include "raylib.h"
 #include "Runtime.h"
 #include "World.h"
+#include "ComponentDraw.h"
+#include "ComponentPosition.h"
 
 /*
 Minix C++ Naming Conventions

@@ -25,6 +25,7 @@ namespace Engine
 	template<typename T>
 	class ComponentBase : public Component
 	{
+	friend class Registry;
 	public:
 		static const std::vector<T*>& GetList()
 		{

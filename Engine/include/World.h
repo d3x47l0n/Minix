@@ -7,9 +7,8 @@ namespace Engine
     class World
     {
     public:
+        Registry registry;
         World();
         void Update();
-    private:
-        Registry _registry;
     };
 }
