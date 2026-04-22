@@ -8,19 +8,65 @@ namespace Engine
         const std::function<void()>& draw)
     {
         InitWindow(w, h, title);
-        InitRuntime();
+
+        InitMinixRuntime();
+        InitPhysicsRuntime();
+        InitLuaRuntime();
+        InitSchedulerRuntime();
+        InitInputRuntime();
+        InitCamera(w, h);
+
         SetTargetFPS(fps);
         SetTargetTPS(tps);
 
         load();
 
+        LockInputRuntime();
+
         while (!WindowShouldClose())
         {
-            Update(GetFrameTime(), update);
+            MinixUpdate(GetFrameTime(),
+                [&](float dt)
+                {
+                    UpdateInput(dt);
+                    UpdateScheduler(dt);
+                    UpdatePhysics(dt);
+                    UpdateCamera(dt);
+                    update(dt);
+                }
+            );
 
-            Draw(draw);
+            BeginDrawing();
+            ClearBackground(RAYWHITE);
+
+            BeginMode2D(Camera::GetRaylibCamera());
+
+            for (auto* drawComponent : Draw2D::GetSortedList())
+            {
+                Object* obj = drawComponent->GetOwner();
+                if (!obj) continue;
+
+                auto* pos = obj->GetComponent<Position2D>();
+                if (!pos) continue;
+
+                drawComponent->Draw(*pos, Coords::GetScale());
+            }
+
+            draw();
+
+            EndMode2D();
+
+            DrawFPS(10, 10);
+            DrawTPS(10, 30);
+
+            EndDrawing();
         }
 
+        StopCamera();
+        StopSchedulerRuntime();
+        StopInputRuntime();
+        StopPhysicsRuntime();
+        StopLuaRuntime();
         CloseWindow();
         return 0;
     }

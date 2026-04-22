@@ -1,30 +1,34 @@
-﻿#include "Registry.h"
+#include "Registry.h"
+
+#include "LuaRuntime.h"
 
 namespace Engine
 {
 	Object::Object(int id)
 		: _id(id)
 	{
-
 	}
 
-	Registry::Registry()
+	void Registry::Init()
 	{
-
+		_idCounter = 0;
 	}
 
-	Registry::~Registry()
+	void Registry::Stop()
 	{
 		for (auto* object : _objects)
 		{
 			delete object;
 		}
 		_objects.clear();
+
 		for (auto* component : _components)
 		{
 			delete component;
 		}
 		_components.clear();
+
+		_idCounter = 0;
 	}
 
 	Object* Registry::CreateObject()
@@ -63,7 +67,7 @@ namespace Engine
 		delete object;
 	}
 
-	const std::vector<Object*>& Registry::GetAllObjects() const
+	const std::vector<Object*>& Registry::GetAllObjects()
 	{
 		return _objects;
 	}
@@ -115,8 +119,10 @@ namespace Engine
 			componentsRegistry.erase(it);
 
 		component->RemoveFromList();
+		component->CleanupLuaState(LuaRuntime::GetState());
+
+		component->_owner = nullptr;
 
 		delete component;
 	}
-
 }

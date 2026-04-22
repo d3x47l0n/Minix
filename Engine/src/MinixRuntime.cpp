@@ -1,20 +1,19 @@
 #include "raylib.h"
-#include "Runtime.h"
-#include "World.h"
+#include "MinixRuntime.h"
 #include <cstdio>
 #include <memory>
 #include <functional>
 
 namespace Engine
 {
-    float Runtime::_accTick = 0.0f;
-    float Runtime::_step = 1.0f / 30.0f;
-    float Runtime::_accCount = 0.0f;
-    int Runtime::_count = 0;
-    int Runtime::_TPS = 0;
-    bool Runtime::_active = false;
+    float MinixRuntime::_accTick = 0.0f;
+    float MinixRuntime::_step = 1.0f / 30.0f;
+    float MinixRuntime::_accCount = 0.0f;
+    int MinixRuntime::_count = 0;
+    int MinixRuntime::_TPS = 0;
+    bool MinixRuntime::_active = false;
 
-    void Runtime::Init()
+    void MinixRuntime::Init()
     {
         _accTick = 0.0f;
         _accCount = 0.0f;
@@ -23,7 +22,7 @@ namespace Engine
         _active = true;
     }
 
-    void Runtime::Reset()
+    void MinixRuntime::Reset()
     {
         _accTick = 0.0f;
         _accCount = 0.0f;
@@ -32,17 +31,17 @@ namespace Engine
         _active = false;
     }
 
-    void Runtime::Start()
+    void MinixRuntime::Start()
     {
         _active = true;
     }
 
-    void Runtime::Stop()
+    void MinixRuntime::Stop()
     {
         _active = false;
     }
 
-    void Runtime::Update(float dt, const std::function<void(float)>& func)
+    void MinixRuntime::Update(float dt, const std::function<void(float)>& func)
     {
         if (!_active) return;
         float deltaTime = (dt <= 0.25f) ? dt : 0.25f;
@@ -69,21 +68,21 @@ namespace Engine
         }
     }
 
-    int Runtime::GetTPS()
+    int MinixRuntime::GetTPS()
     {
         return _TPS;
     }
 
-    void Runtime::SetTargetTPS(int TPS)
+    void MinixRuntime::SetTargetTPS(int TPS)
     {
         if (TPS <= 0) TPS = 1;
         _step = 1.0f / (float)TPS;
     }
 
-    void Runtime::DrawTPS(int x, int y)
+    void MinixRuntime::DrawTPS(int x, int y)
     {
         char tpsText[32];
-        snprintf(tpsText, sizeof(tpsText), "%d TPS", Runtime::GetTPS());
+        snprintf(tpsText, sizeof(tpsText), "%d TPS", MinixRuntime::GetTPS());
         DrawText(tpsText, x, y, 20, ORANGE);
     }
 }

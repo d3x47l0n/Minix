@@ -11,28 +11,25 @@ namespace Engine
     class Registry
     {
     public:
-        Registry();
-        ~Registry();
+        static void Init();
+        static void Stop();
 
-        // object
-        // === base
-        Object* CreateObject();
-        void DestroyObject(Object* object);
-        const std::vector<Object*>& GetAllObjects() const;
-        // === hierarchy
-        void AttachChild(Object* parent, Object* child);
-        void DetachChild(Object* parent, Object* child);
+        static Object* CreateObject();
+        static void DestroyObject(Object* object);
+        static const std::vector<Object*>& GetAllObjects();
 
-        // component
+        static void AttachChild(Object* parent, Object* child);
+        static void DetachChild(Object* parent, Object* child);
+
         template<typename T, typename... Args>
-        T* CreateComponent(Object* owner, Args&&... args);
+        static T* CreateComponent(Object* owner, Args&&... args);
 
-        void DestroyComponent(Component* component);
+        static void DestroyComponent(Component* component);
 
     private:
-        std::vector<Object*> _objects;
-        std::vector<Component*> _components;
-        int _idCounter = 0;
+        inline static std::vector<Object*> _objects;
+        inline static std::vector<Component*> _components;
+        inline static int _idCounter = 0;
     };
 }
 

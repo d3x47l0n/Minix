@@ -5,7 +5,7 @@
 
 namespace Engine
 {
-	class Runtime
+	class MinixRuntime
 	{
 	public:
 		static void Init();

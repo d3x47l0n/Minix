@@ -4,10 +4,26 @@
 #include <functional>
 
 #include "raylib.h"
-#include "Runtime.h"
-#include "World.h"
+#include "box2d/box2d.h"
+
+#include "MinixRuntime.h"
+#include "LuaRuntime.h"
+#include "PhysicsRuntime.h"
+#include "InputRuntime.h"
+#include "SchedulerRuntime.h"
+
+#include "Registry.h"
+#include "Camera.h"
+#include "Messager.h"
+
 #include "ComponentDraw.h"
 #include "ComponentPosition.h"
+#include "ComponentPhysics.h"
+
+#include "TypeObject.h"
+#include "TypeComponent.h"
+#include "TypeCoords.h"
+#include "TypeAction.h"
 
 /*
 Minix C++ Naming Conventions
@@ -39,37 +55,116 @@ Constants:
 
 namespace Engine
 {
-
-    template<typename F>
-    inline void Draw(F func)
+    inline void InitMinixRuntime()
     {
-        BeginDrawing();
-        func();
-        EndDrawing();
+        Engine::MinixRuntime::Init();
     }
 
-    inline void InitRuntime()
+    inline void MinixUpdate(float dt, const std::function<void(float)>& func)
     {
-        Engine::Runtime::Init();
-    }
-
-    inline void Update(float dt, const std::function<void(float)>& func)
-    {
-        Engine::Runtime::Update(dt, func);
+        Engine::MinixRuntime::Update(dt, func);
     }
 
     inline void SetTargetTPS(int TPS)
     {
-        Engine::Runtime::SetTargetTPS(TPS);
+        Engine::MinixRuntime::SetTargetTPS(TPS);
     }
 
     inline void DrawTPS(int x, int y)
     {
-        Engine::Runtime::DrawTPS(x, y);
+        Engine::MinixRuntime::DrawTPS(x, y);
     }
 
-    // da da da stiu ca std::function adauga vreo 5-15 apeluri in plus fata de template dar asta e doar
-    // un wrapper ca sa nu trebuiasca sa pun codul direct in header ca in epoca de piatra
+    inline void InitLuaRuntime()
+    {
+        Engine::LuaRuntime::Init();
+    }
+
+    inline void StopLuaRuntime()
+    {
+        Engine::LuaRuntime::Stop();
+    }
+
+    inline void LuaLoad()
+    {
+        Engine::LuaRuntime::CallLoad();
+    }
+
+    inline void LuaUpdate(float dt)
+    {
+        Engine::LuaRuntime::CallUpdate(dt);
+    }
+
+    inline void LuaDraw()
+    {
+        Engine::LuaRuntime::CallDraw();
+    }
+
+    inline void InitInputRuntime()
+    {
+        Engine::InputRuntime::Init();
+    }
+
+    inline void StopInputRuntime()
+    {
+        Engine::InputRuntime::Stop();
+    }
+
+    inline void LockInputRuntime()
+    {
+        Engine::InputRuntime::Lock();
+    }
+
+    inline void UpdateInput(float dt)
+    {
+        Engine::InputRuntime::Update(dt);
+    }
+
+    inline void InitPhysicsRuntime()
+    {
+        Engine::PhysicsRuntime::Init();
+    }
+
+    inline void StopPhysicsRuntime()
+    {
+        Engine::PhysicsRuntime::Stop();
+    }
+
+    inline void UpdatePhysics(float dt)
+    {
+        Engine::PhysicsRuntime::Update(dt);
+    }
+
+    inline void InitCamera(int w, int h)
+    {
+        Engine::Camera::Init(w, h);
+    }
+
+    inline void StopCamera()
+    {
+        Engine::Camera::Stop();
+    }
+
+    inline void UpdateCamera(float dt)
+    {
+        Engine::Camera::Update(dt);
+    }
+
+    inline void InitSchedulerRuntime()
+    {
+        Engine::SchedulerRuntime::Init();
+    }
+
+    inline void StopSchedulerRuntime()
+    {
+        Engine::SchedulerRuntime::Stop();
+    }
+
+    inline void UpdateScheduler(float dt)
+    {
+        Engine::SchedulerRuntime::Update(dt);
+    }
+
     int App(int w, int h, const char* title, int fps, int tps,
         const std::function<void()>& load,
         const std::function<void(float)>& update,
