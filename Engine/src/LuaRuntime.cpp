@@ -1,5 +1,7 @@
 #include "LuaRuntime.h"
 #include "LuaAPI.h"
+#include "Gfx.h"
+#include "Sfx.h"
 
 #include <cstdio>
 #include <string>
@@ -82,6 +84,9 @@ namespace Engine
         lua_pushcfunction(_L, Lua_Require);
         lua_setglobal(_L, "require");
 
+        Gfx::Init();
+        Sfx::Init();
+
         LuaAPI::Init(_L);
 
         return true;
@@ -94,6 +99,9 @@ namespace Engine
             lua_close(_L);
             _L = nullptr;
         }
+
+        Sfx::Stop();
+        Gfx::Stop();
 
         _context = LuaExecutionContext::Outside;
     }

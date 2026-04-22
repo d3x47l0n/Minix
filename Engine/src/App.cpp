@@ -8,6 +8,7 @@ namespace Engine
         const std::function<void()>& draw)
     {
         InitWindow(w, h, title);
+        InitAudioDevice();
 
         InitMinixRuntime();
         InitPhysicsRuntime();
@@ -52,12 +53,13 @@ namespace Engine
                 drawComponent->Draw(*pos, Coords::GetScale());
             }
 
-            draw();
-
             EndMode2D();
+
+            draw();
 
             DrawFPS(10, 10);
             DrawTPS(10, 30);
+            DrawText("MINIX DEMO", w / 2 - MeasureText("MINIX DEMO",20) / 2, 10, 20, BLUE);
 
             EndDrawing();
         }
@@ -67,6 +69,7 @@ namespace Engine
         StopInputRuntime();
         StopPhysicsRuntime();
         StopLuaRuntime();
+        CloseAudioDevice();
         CloseWindow();
         return 0;
     }

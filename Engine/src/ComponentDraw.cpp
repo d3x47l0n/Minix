@@ -2,6 +2,7 @@
 
 #include "LuaComponentBuilder.h"
 #include "Registry.h"
+#include "Gfx.h"
 
 namespace Engine
 {
@@ -61,6 +62,65 @@ namespace Engine
             .FieldNumber("r", &CircleDraw2D::GetR, &CircleDraw2D::SetR)
             .FieldInteger("drawOrder", &CircleDraw2D::GetDrawOrder, &CircleDraw2D::SetDrawOrder)
             .FieldColorMember("color", &CircleDraw2D::color)
+            .Register();
+    }
+
+    void SpriteDraw2D::Draw(Coords2D& pos, float scale)
+    {
+        (void)scale;
+
+        Texture2D* texture = Gfx::Get(gfx);
+        if (!texture) return;
+
+        Rectangle src{
+            0.0f,
+            0.0f,
+            static_cast<float>(texture->width),
+            static_cast<float>(texture->height)
+        };
+
+        Rectangle dst{
+            pos.GetX() + GetOffX(),
+            (pos.GetY() + GetOffY()) * (-1.0f),
+            w,
+            h
+        };
+
+        Vector2 origin{
+            w / 2.0f,
+            h / 2.0f
+        };
+
+        DrawTexturePro(*texture, src, dst, origin, pos.GetA() + GetOffA(), tint);
+    }
+
+    void SpriteDraw2D::RegisterLuaBinding()
+    {
+        LuaComponentBuilder<SpriteDraw2D>("spriteDraw2D")
+            .Group("draw2D")
+            .Group2("spriteDraw2D")
+            .Creator([](Object* object) -> Component*
+                {
+                    if (auto* c = object->GetComponent<SpriteDraw2D>())
+                        return c;
+
+                    return Registry::CreateComponent<SpriteDraw2D>(
+                        object,
+                        0,
+                        32.0f, 32.0f,
+                        0.0f, 0.0f, 0.0f,
+                        WHITE,
+                        0
+                    );
+                })
+            .FieldNumber("x", &SpriteDraw2D::GetX, &SpriteDraw2D::SetX)
+            .FieldNumber("y", &SpriteDraw2D::GetY, &SpriteDraw2D::SetY)
+            .FieldNumber("a", &SpriteDraw2D::GetA, &SpriteDraw2D::SetA)
+            .FieldInteger("gfx", &SpriteDraw2D::GetGfx, &SpriteDraw2D::SetGfx)
+            .FieldNumber("w", &SpriteDraw2D::GetW, &SpriteDraw2D::SetW)
+            .FieldNumber("h", &SpriteDraw2D::GetH, &SpriteDraw2D::SetH)
+            .FieldInteger("drawOrder", &SpriteDraw2D::GetDrawOrder, &SpriteDraw2D::SetDrawOrder)
+            .FieldColorMember("color", &SpriteDraw2D::tint)
             .Register();
     }
 }

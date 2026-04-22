@@ -9,6 +9,8 @@
 #include "LuaRuntime.h"
 #include "InputRuntime.h"
 #include "Messager.h"
+#include "Gfx.h"
+#include "Sfx.h"
 #include "SchedulerRuntime.h"
 #include "TypeObject.h"
 #include "TypeComponent.h"
@@ -1014,6 +1016,56 @@ namespace Engine
         return 0;
     }
 
+    int LuaAPI::Lua_Play(lua_State* L)
+    {
+        int id = static_cast<int>(luaL_checkinteger(L, 1));
+        Sfx::Play(id);
+        return 0;
+    }
+
+    int LuaAPI::Lua_DrawSprite(lua_State* L)
+    {
+        int gfxId = static_cast<int>(luaL_checkinteger(L, 1));
+        float x = static_cast<float>(luaL_checknumber(L, 2));
+        float y = static_cast<float>(luaL_checknumber(L, 3));
+        float w = static_cast<float>(luaL_checknumber(L, 4));
+        float h = static_cast<float>(luaL_checknumber(L, 5));
+
+        Texture2D* texture = Gfx::Get(gfxId);
+        if (!texture) return 0;
+
+        Color tint = WHITE;
+
+        if (lua_gettop(L) >= 6 && lua_istable(L, 6))
+        {
+            unsigned char r, g, b, a;
+            if (LuaAPI::ReadColorTable(L, 6, r, g, b, a))
+                tint = Color{ r, g, b, a };
+        }
+
+        Rectangle src{
+            0.0f,
+            0.0f,
+            static_cast<float>(texture->width),
+            static_cast<float>(texture->height)
+        };
+
+        Rectangle dst{
+            x,
+            y,
+            w,
+            h
+        };
+
+        Vector2 origin{
+            w / 2.0f,
+            h / 2.0f
+        };
+
+        DrawTexturePro(*texture, src, dst, origin, 0.0f, tint);
+        return 0;
+    }
+
     // =========================================================
     // Camera API
     // =========================================================
@@ -1336,6 +1388,31 @@ namespace Engine
         }
     }
 
+    void LuaAPI::CreateAssetTables(lua_State* L)
+    {
+        lua_newtable(L);
+        for (int i = 0; i < Gfx::GetCount(); ++i)
+        {
+            const char* name = Gfx::GetName(i);
+            if (!name) continue;
+
+            lua_pushinteger(L, i);
+            lua_setfield(L, -2, name);
+        }
+        lua_setglobal(L, "gfx");
+
+        lua_newtable(L);
+        for (int i = 0; i < Sfx::GetCount(); ++i)
+        {
+            const char* name = Sfx::GetName(i);
+            if (!name) continue;
+
+            lua_pushinteger(L, i);
+            lua_setfield(L, -2, name);
+        }
+        lua_setglobal(L, "sfx");
+    }
+
     // =========================================================
     // Builtins registration
     // =========================================================
@@ -1355,6 +1432,7 @@ namespace Engine
         RectanglePhysics2D::RegisterLuaBinding();
         CircleDraw2D::RegisterLuaBinding();
         RectangleDraw2D::RegisterLuaBinding();
+        SpriteDraw2D::RegisterLuaBinding();
 
         RegisterBuiltins();
     }
@@ -1391,6 +1469,22 @@ namespace Engine
             .AllowInDraw(false)
             .AllowOutside(false)
             .Bind(&LuaAPI::Lua_Every)
+            .Register();
+
+        LuaGlobalFunctionBuilder("play")
+            .AllowInLoad(true)
+            .AllowInUpdate(true)
+            .AllowInDraw(true)
+            .AllowOutside(false)
+            .Bind(&LuaAPI::Lua_Play)
+            .Register();
+
+        LuaGlobalFunctionBuilder("drawSprite")
+            .AllowInLoad(false)
+            .AllowInUpdate(false)
+            .AllowInDraw(true)
+            .AllowOutside(false)
+            .Bind(&LuaAPI::Lua_DrawSprite)
             .Register();
 
         LuaObjectMethodBuilder("addComponent")
@@ -1512,6 +1606,7 @@ namespace Engine
         CreateCoreTables(L);
         CreateTypeDescriptors(L);
         CreateConstantTables(L);
+        CreateAssetTables(L);
         Refresh(L);
     }
 }

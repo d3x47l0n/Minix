@@ -177,4 +177,52 @@ namespace Engine
 
         static void RegisterLuaBinding();
     };
+
+    class SpriteDraw2D : public Draw2D
+    {
+    public:
+        int gfx;
+        float w;
+        float h;
+        Color tint;
+
+        explicit SpriteDraw2D(int gfx, float w, float h, float offx, float offy, float offa, Color tint, int drawOrder)
+            : Draw2D(offx, offy, offa, drawOrder), gfx(gfx), w(w), h(h), tint(tint)
+        {
+        }
+
+        void SetGfx(int value)
+        {
+            gfx = value;
+        }
+
+        int GetGfx()
+        {
+            return gfx;
+        }
+
+        void SetW(float value)
+        {
+            w = value;
+        }
+
+        float GetW()
+        {
+            return w;
+        }
+
+        void SetH(float value)
+        {
+            h = value;
+        }
+
+        float GetH()
+        {
+            return h;
+        }
+
+        void Draw(Coords2D& pos, float scale) override;
+
+        static void RegisterLuaBinding();
+    };
 }

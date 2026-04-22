@@ -88,7 +88,7 @@ add_library(Engine STATIC
     "Engine/src/LuaAPI.cpp" 
     "Engine/src/PhysicsRuntime.cpp" 
     "Engine/src/InputRuntime.cpp" 
-    "Engine/src/Camera.cpp" "Engine/src/ComponentPosition.cpp" "Engine/src/ComponentDraw.cpp" "Engine/src/ComponentPhysics.cpp" "Engine/src/Messager.cpp" "Engine/src/SchedulerRuntime.cpp" "Engine/src/EventPhysicsTouched.cpp")
+    "Engine/src/Camera.cpp" "Engine/src/ComponentPosition.cpp" "Engine/src/ComponentDraw.cpp" "Engine/src/ComponentPhysics.cpp" "Engine/src/Messager.cpp" "Engine/src/SchedulerRuntime.cpp" "Engine/src/EventPhysicsTouched.cpp" "Engine/src/Gfx.cpp" "Engine/src/Sfx.cpp")
 
 target_include_directories(Engine PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/Engine/include

@@ -8,6 +8,8 @@
 
 #include "raylib.h"
 #include "Registry.h"
+#include "Gfx.h"
+#include "Sfx.h"
 #include "ComponentDraw.h"
 #include "ComponentPhysics.h"
 #include "ComponentPosition.h"
@@ -202,6 +204,11 @@ namespace Engine
 
         static int Lua_After(lua_State* L);
         static int Lua_Every(lua_State* L);
+
+        static int Lua_Play(lua_State* L);
+        static void CreateAssetTables(lua_State* L);
+
+        static int Lua_DrawSprite(lua_State* L);
     };
 
     class LuaGlobalFunctionBuilder
